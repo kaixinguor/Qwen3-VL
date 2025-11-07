@@ -6,6 +6,7 @@ It replaces API calls with local model inference for the same functionality.
 """
 
 import json
+import time
 import ast
 import os
 import torch
@@ -13,6 +14,7 @@ from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 from PIL import ImageColor
 from transformers import AutoModelForImageTextToText, AutoProcessor
+import matplotlib.pyplot as plt
 
 # 可视化工具函数
 additional_colors = [colorname for (colorname, colorcode) in ImageColor.colormap.items()]
@@ -125,9 +127,6 @@ def plot_bounding_boxes(im, bounding_boxes):
 
     # Display the image
     # img.show()
-
-    # With matplotlib
-    import matplotlib.pyplot as plt
     plt.imshow(img)
     plt.show()
 
@@ -281,6 +280,7 @@ class Qwen3VLLocalInference:
         inputs = inputs.to(self.model.device)
         
         # 推理：生成输出
+        t_start = time.time()
         with torch.no_grad():
             generated_ids = self.model.generate(**inputs, max_new_tokens=2048)
             generated_ids_trimmed = [
@@ -289,7 +289,8 @@ class Qwen3VLLocalInference:
             output_text = self.processor.batch_decode(
                 generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
             )
-        
+        t_end = time.time()
+        print(f"Time taken: {t_end - t_start} seconds")
         return output_text[0] if output_text else ""
 
 
