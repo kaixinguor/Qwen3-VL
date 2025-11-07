@@ -125,7 +125,7 @@ def plot_bounding_boxes(im, bounding_boxes):
 
     # Display the image
     # img.show()
-    
+
     # With matplotlib
     import matplotlib.pyplot as plt
     plt.imshow(img)
@@ -333,7 +333,7 @@ def inference_with_local_model(img_url, prompt, min_pixels=64 * 32 * 32, max_pix
 if __name__ == "__main__":
     # 初始化本地模型推理器
     # 注意：请根据实际情况修改模型路径
-    model_path = "models/qwen3-vl-4b-instruct"  # 可以是本地路径或 "Qwen/Qwen3-VL-4B-Instruct"
+    model_path = "models/Qwen3-VL-4B-Instruct"  # 可以是本地路径或 "Qwen/Qwen3-VL-4B-Instruct"
     
     # 如果模型路径不存在，尝试使用 HuggingFace 模型名称
     if not os.path.exists(model_path):
