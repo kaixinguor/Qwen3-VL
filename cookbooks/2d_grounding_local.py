@@ -124,7 +124,15 @@ def plot_bounding_boxes(im, bounding_boxes):
             draw.text((abs_x1 + 8, abs_y1 + 6), bounding_box["label"], fill=color, font=font)
 
     # Display the image
-    img.show()
+    # img.show()
+    
+    # With matplotlib
+    import matplotlib.pyplot as plt
+    plt.imshow(img)
+    plt.show()
+
+    # Save permanently instead
+    img.save('output.png')
 
 
 def plot_points(im, text):
@@ -228,9 +236,12 @@ class Qwen3VLLocalInference:
             模型生成的文本响应
         """
         # 处理图片路径
-        if os.path.exists(img_url):
-            # 本地文件，使用 file:// 前缀或绝对路径
-            image_path = f"file://{os.path.abspath(img_url)}"
+        # 如果 img_url 已经是 PIL Image 对象，直接使用
+        if isinstance(img_url, Image.Image):
+            image_path = img_url
+        elif os.path.exists(img_url):
+            # 本地文件，直接使用绝对路径（transformers 支持直接路径，不需要 file:// 前缀）
+            image_path = os.path.abspath(img_url)
         elif img_url.startswith("http://") or img_url.startswith("https://"):
             # URL 直接使用
             image_path = img_url
@@ -238,8 +249,9 @@ class Qwen3VLLocalInference:
             # 尝试使用绝对路径
             abs_path = os.path.abspath(img_url)
             if os.path.exists(abs_path):
-                image_path = f"file://{abs_path}"
+                image_path = abs_path
             else:
+                # 如果路径不存在，尝试直接使用原路径（可能是相对路径）
                 image_path = img_url
         
         # 构建消息
@@ -336,7 +348,7 @@ if __name__ == "__main__":
     # 示例 1: 检测餐桌上的不同物体
     print("\n=== Example 1: Detecting different objects on a dining table ===")
     prompt = 'locate every instance that belongs to the following categories: "plate/dish, scallop, wine bottle, tv, bowl, spoon, air conditioner, coconut drink, cup, chopsticks, person". Report bbox coordinates in JSON format.'
-    img_url = "./assets/spatial_understanding/dining_table.png"
+    img_url = "./cookbooks/assets/spatial_understanding/dining_table.png"
     
     if os.path.exists(img_url):
         # 使用直接调用方式
